@@ -2,8 +2,11 @@
     width: '50%';
     padding: '20px';
     height: '100vh';
-    overflow-y: 'auto';
+    
   }
-  
+  .container{
+    display: flex;
+    flex-direction: row;
+  }
 
   
