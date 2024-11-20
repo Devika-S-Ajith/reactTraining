@@ -1,0 +1,12 @@
+.random {
+    width: '50%';
+    padding: '20px';
+    height: '100vh';
+    
+  }
+  .container{
+    display: flex;
+    flex-direction: row;
+  }
+
+  

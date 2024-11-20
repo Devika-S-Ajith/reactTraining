@@ -1,0 +1,17 @@
+/* src/rightSection.css */
+.right-section {
+  width: 50%;            /* Takes up 50% of the screen width */
+  height: 100vh;         /* Full height of the viewport */
+  padding: 20px;         /* Adds padding inside the section */
+  box-sizing: border-box; /* Ensures padding is included in the width and height */
+  display: flex;         /* Enables flexbox layout */
+  justify-content: center; /* Horizontally centers the content */
+  align-items: center;   /* Vertically centers the content */
+}
+
+.random {
+  font-size: 32px;       /* Larger font size */
+  color: #333;           /* Dark text color */
+  font-family: Arial, sans-serif;
+  text-align: center;    /* Centers text within the h1 */
+}
