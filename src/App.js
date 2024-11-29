@@ -1,108 +1,103 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import TodoList from "./leftSection";
 import RandomText from "./rightSection";
 import "./App.css";
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todos: [], 
-      newTodo: "",
-      text: "Waiting ...",
-      useLocalStorage: true, 
-    };
-  }
+const App = () => {
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState("");
+  const [text, setText] = useState("Waiting ...");
+  const [useLocalStorage, setUseLocalStorage] = useState(true);
 
-  componentDidMount() {
-    const storage = this.state.useLocalStorage ? localStorage : sessionStorage;
+ 
+  useEffect(() => {
+    const storage = useLocalStorage ? localStorage : sessionStorage;
     const storedTodos = JSON.parse(storage.getItem("todos")) || [];
-    this.setState({ todos: storedTodos });
+    setTodos(storedTodos);
 
-    setTimeout(() => {
-      this.setState({ text: "Helooooooooo  !!!!!!!!!!!!" });
+  
+    const timeoutId = setTimeout(() => {
+      setText("Helooooooooo  !!!!!!!!!!!!");
     }, 10000);
-  }
 
-  saveTodos = () => {
-    const storage = this.state.useLocalStorage ? localStorage : sessionStorage;
-    storage.setItem("todos", JSON.stringify(this.state.todos));
+  
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [useLocalStorage]); 
+
+  const saveTodos = () => {
+    const storage = useLocalStorage ? localStorage : sessionStorage;
+    storage.setItem("todos", JSON.stringify(todos));
   };
 
-  handleTodoInput = (e) => {
-    this.setState({ newTodo: e.target.value });
+  const handleTodoInput = (e) => {
+    setNewTodo(e.target.value);
   };
 
-  addTodo = () => {
-    if (this.state.newTodo.trim()) {
-      this.setState(
-        (prevState) => ({
-          todos: [...prevState.todos, prevState.newTodo],
-          newTodo: "",
-        }),
-        this.saveTodos
-      );
+  const addTodo = () => {
+    if (newTodo.trim()) {
+      setTodos((prevTodos) => {
+        const updatedTodos = [...prevTodos, newTodo];
+        saveTodos();
+        return updatedTodos;
+      });
+      setNewTodo("");
     }
   };
 
-  deleteTodo = (index) => {
-    this.setState(
-      (prevState) => {
-        const todosCopy = [...prevState.todos];
-        todosCopy.splice(index, 1); 
-        return { todos: todosCopy }; 
-      },
-      this.saveTodos
-    );
+  const deleteTodo = (index) => {
+    setTodos((prevTodos) => {
+      const todosCopy = [...prevTodos];
+      todosCopy.splice(index, 1);
+      saveTodos();
+      return todosCopy;
+    });
   };
 
-  editTodo = (index, newText) => {
-    const updatedTodos = [...this.state.todos];
-    updatedTodos[index] = newText;
-    this.setState({ todos: updatedTodos }, this.saveTodos);
+  const editTodo = (index, newText) => {
+    setTodos((prevTodos) => {
+      const updatedTodos = [...prevTodos];
+      updatedTodos[index] = newText;
+      saveTodos();
+      return updatedTodos;
+    });
   };
 
-  toggleStorage = () => {
-    this.setState(
-      (prevState) => ({
-        useLocalStorage: !prevState.useLocalStorage,
-      }),
-      () => {
-       
-        const storage = this.state.useLocalStorage ? localStorage : sessionStorage;
-        storage.setItem("todos", JSON.stringify(this.state.todos));
-      }
-    );
+  const toggleStorage = () => {
+    setUseLocalStorage((prev) => {
+      const newUseLocalStorage = !prev;
+      const storage = newUseLocalStorage ? localStorage : sessionStorage;
+      storage.setItem("todos", JSON.stringify(todos));
+      return newUseLocalStorage;
+    });
   };
 
-  render() {
-    return (
-      <div className="container">
-        
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              checked={this.state.useLocalStorage}
-              onChange={this.toggleStorage}
-            />
-            Use LocalStorage
-          </label>
-        </div>
-        
-        <TodoList
-          todos={this.state.todos}
-          newTodo={this.state.newTodo}
-          onInputChange={this.handleTodoInput}
-          addTodo={this.addTodo}
-          deleteTodo={this.deleteTodo}
-          editTodo={this.editTodo}
-        />
-        
-        <RandomText text={this.state.text} />
+  return (
+    <div className="container">
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={useLocalStorage}
+            onChange={toggleStorage}
+          />
+          Use LocalStorage
+        </label>
       </div>
-    );
-  }
-}
+
+      <TodoList
+        todos={todos}
+        newTodo={newTodo}
+        onInputChange={handleTodoInput}
+        addTodo={addTodo}
+        deleteTodo={deleteTodo}
+        editTodo={editTodo}
+      />
+
+      <RandomText text={text} />
+    </div>
+  );
+};
 
 export default App;
