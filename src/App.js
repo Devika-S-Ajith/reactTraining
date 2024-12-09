@@ -1,77 +1,48 @@
-import { useState, useEffect } from "react";
-import TodoList from "./leftSection";
-import RandomText from "./rightSection";
-import "./App.css";
+import React, { useEffect, useState } from 'react';
+import TodoList from './leftSection';
+import RandomText from './rightSection';
+import './App.css';
+import { TodoProvider, useTodos } from './TodoContext'; 
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
-  const [newTodo, setNewTodo] = useState("");
-  const [text, setText] = useState("Waiting ...");
+  const [text, setText] = useState('Waiting ...');
   const [useLocalStorage, setUseLocalStorage] = useState(true);
 
- 
+  const { state, dispatch } = useTodos();
+
   useEffect(() => {
     const storage = useLocalStorage ? localStorage : sessionStorage;
-    const storedTodos = JSON.parse(storage.getItem("todos")) || [];
-    setTodos(storedTodos);
+    const storedTodos = JSON.parse(storage.getItem('todos')) || [];
+    storedTodos.forEach(todo => {
+      dispatch({ type: 'ADD_TODO', payload: todo });
+    });
 
-  
     const timeoutId = setTimeout(() => {
-      setText("Helooooooooo  !!!!!!!!!!!!");
+      setText('Helooooooooo  !!!!!!!!!!!!');
     }, 10000);
 
-  
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [useLocalStorage]); 
+  }, [useLocalStorage, dispatch]);
 
   const saveTodos = () => {
     const storage = useLocalStorage ? localStorage : sessionStorage;
-    storage.setItem("todos", JSON.stringify(todos));
-  };
-
-  const handleTodoInput = (e) => {
-    setNewTodo(e.target.value);
-  };
-
-  const addTodo = () => {
-    if (newTodo.trim()) {
-      setTodos((prevTodos) => {
-        const updatedTodos = [...prevTodos, newTodo];
-        saveTodos();
-        return updatedTodos;
-      });
-      setNewTodo("");
-    }
-  };
-
-  const deleteTodo = (index) => {
-    setTodos((prevTodos) => {
-      const todosCopy = [...prevTodos];
-      todosCopy.splice(index, 1);
-      saveTodos();
-      return todosCopy;
-    });
-  };
-
-  const editTodo = (index, newText) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = [...prevTodos];
-      updatedTodos[index] = newText;
-      saveTodos();
-      return updatedTodos;
-    });
+    storage.setItem('todos', JSON.stringify(state.todos));
   };
 
   const toggleStorage = () => {
     setUseLocalStorage((prev) => {
       const newUseLocalStorage = !prev;
       const storage = newUseLocalStorage ? localStorage : sessionStorage;
-      storage.setItem("todos", JSON.stringify(todos));
+      storage.setItem('todos', JSON.stringify(state.todos));
       return newUseLocalStorage;
     });
   };
+
+  useEffect(() => {
+    saveTodos(); 
+  }, [state.todos]);
 
   return (
     <div className="container">
@@ -86,18 +57,16 @@ const App = () => {
         </label>
       </div>
 
-      <TodoList
-        todos={todos}
-        newTodo={newTodo}
-        onInputChange={handleTodoInput}
-        addTodo={addTodo}
-        deleteTodo={deleteTodo}
-        editTodo={editTodo}
-      />
-
+      <TodoList />
       <RandomText text={text} />
     </div>
   );
 };
 
-export default App;
+const WrappedApp = () => (
+  <TodoProvider>
+    <App />
+  </TodoProvider>
+);
+
+export default WrappedApp;
