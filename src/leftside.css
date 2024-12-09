@@ -1,25 +1,33 @@
-.left-section {
-  width: 50%;
-  padding: 20px;
-  border-right: 2px solid #ccc; 
-  height: 100vh;
-  box-sizing: border-box; 
-  overflow-y: auto; 
+.todo-input {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
 }
 
-.left-section h2 {
-  text-align: center;
-  font-size: 24px;
-  color: #060606;
+input {
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
-.left-section ul {
-  list-style-type: none;
+button {
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.left-section li {
-  font-size: 18px;
-  padding: 8px 0;
-  color: #0e0d0d;
+button[type='submit'] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
 }
 
+button[type='submit']:hover {
+  background-color: #45a049;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}

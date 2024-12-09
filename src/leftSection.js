@@ -4,17 +4,36 @@ import './leftside.css';
 
 const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
+  const [error, setError] = useState('');
   const { state, dispatch } = useTodos(); 
 
   const handleTodoInput = (e) => {
     setNewTodo(e.target.value);
+    setError('');
   };
 
-  const addTodo = () => {
-    if (newTodo.trim()) {
-      dispatch({ type: 'ADD_TODO', payload: newTodo });
-      setNewTodo('');
+  const validateTodo = () => {
+    if (!newTodo.trim()) {
+      return 'TODO cannot be empty.';
     }
+    if (newTodo.length < 3) {
+      return 'TODO must be at least 3 characters long.';
+    }
+    return '';
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const validationError = validateTodo();
+    if (validationError) {
+      setError(validationError);
+      return; 
+    }
+
+    dispatch({ type: 'ADD_TODO', payload: newTodo });
+
+    setNewTodo('');
   };
 
   const deleteTodo = (index) => {
@@ -44,15 +63,19 @@ const TodoList = () => {
           </li>
         ))}
       </ul>
-      <div className="todo-input">
+
+      <form onSubmit={handleSubmit} className="todo-input">
         <input
           type="text"
           value={newTodo}
           onChange={handleTodoInput}
           placeholder="Add a new todo"
+          aria-label="New Todo"
         />
-        <button onClick={addTodo}>Add</button>
-      </div>
+        <button type="submit">Add</button>
+
+        {error && <div className="error-message">{error}</div>} 
+      </form>
     </div>
   );
 };
