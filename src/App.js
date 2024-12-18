@@ -59,9 +59,9 @@ const App = () => {
             <li>
               <NavLink to="/completed-todos" className={({ isActive }) => (isActive ? 'active' : '')}>Completed Todos</NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/add-todo" className={({ isActive }) => (isActive ? 'active' : '')}>Add Todo</NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : '')}>Login</NavLink>
             </li>
